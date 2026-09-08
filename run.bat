@@ -6,7 +6,7 @@ echo ====================================================
 echo.
 echo Procurando o Maven do Apache NetBeans...
 
-set MVN_PATH="C:\Program Files\Apache NetBeans\java\maven\bin\mvn.cmd"
+set MVN_PATH="C:\apache-maven-3.9.16\bin\mvn.cmd"
 
 if exist %MVN_PATH% (
     echo Maven encontrado! Iniciando a aplicação...

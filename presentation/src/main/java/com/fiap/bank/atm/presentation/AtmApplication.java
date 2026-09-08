@@ -1,9 +1,8 @@
-package com.fiap.bank.atm;
+package com.fiap.bank.atm.presentation;
 
-import com.fiap.bank.atm.application.service.AtmService;
 import com.fiap.bank.atm.domain.repository.AccountRepository;
 import com.fiap.bank.atm.infrastructure.persistence.InMemoryAccountRepository;
-import com.fiap.bank.atm.presentation.AtmFrame;
+import com.fiap.bank.atm.application.service.AtmService;
 import javax.swing.SwingUtilities;
 
 public class AtmApplication {
