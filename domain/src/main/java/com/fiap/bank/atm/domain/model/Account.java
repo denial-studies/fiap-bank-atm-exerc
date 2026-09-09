@@ -1,6 +1,7 @@
 package com.fiap.bank.atm.domain.model;
 
 import com.fiap.bank.atm.domain.exception.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +45,11 @@ public class Account extends BaseEntity {
     }
 
     public Money getTotalWithdrawnToday() {
-        return totalWithdrawnToday;
+        return transactions.stream()
+                .filter(tx -> tx.getType() == TransactionType.WITHDRAWAL)
+                .filter(tx -> tx.getTimestamp().toLocalDate().equals(LocalDate.now()))
+                .map(Transaction::getAmount)
+                .reduce(Money.ZERO, Money::plus);
     }
 
     public boolean isBlocked() {
@@ -92,10 +97,11 @@ public class Account extends BaseEntity {
                     "Saldo insuficiente para realizar o saque. Saldo disponível: " + balance);
         }
 
-        Money projectedWithdrawal = totalWithdrawnToday.plus(amount);
+        Money totalToday = getTotalWithdrawnToday();
+        Money projectedWithdrawal = totalToday.plus(amount);
         if (projectedWithdrawal.isGreaterThan(dailyWithdrawalLimit)) {
             throw new DailyLimitExceededException("Limite diário de saque excedido. Limite restante hoje: "
-                    + dailyWithdrawalLimit.minus(totalWithdrawnToday));
+                    + dailyWithdrawalLimit.minus(totalToday));
         }
 
         balance = balance.minus(amount);

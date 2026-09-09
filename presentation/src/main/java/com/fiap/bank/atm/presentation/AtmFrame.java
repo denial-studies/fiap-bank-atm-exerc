@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 
 public class AtmFrame extends javax.swing.JFrame {
@@ -517,16 +518,14 @@ public class AtmFrame extends javax.swing.JFrame {
         sb.append("----------------------------------------\n");
 
         List<TransactionDTO> txs = atmService.getStatement();
-        int count = 0;
-        // Pega as últimas 5 transações
-        for (int i = txs.size() - 1; i >= 0 && count < 5; i--) {
-            TransactionDTO tx = txs.get(i);
-            sb.append(String.format("%-12s %-14s %12s\n",
-                    tx.formattedTimestamp(),
-                    tx.typeDescription(),
-                    tx.amount().formatted()));
-            count++;
-        }
+        // Pega as últimas 5 transações com Streams API
+        txs.stream()
+                .sorted(Comparator.comparing(TransactionDTO::timestamp).reversed())
+                .limit(5)
+                .forEach(tx -> sb.append(String.format("%-12s %-14s %12s\n",
+                        tx.formattedTimestamp(),
+                        tx.typeDescription(),
+                        tx.amount().formatted())));
 
         sb.append("----------------------------------------\n");
         sb.append("SALDO ATUAL: ").append(acc.balance().formatted()).append("\n");

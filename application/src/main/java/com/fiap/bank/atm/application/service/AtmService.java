@@ -31,11 +31,8 @@ public class AtmService {
     }
 
     public AccountInfoDTO authenticate(String accountNumber, String pin) {
-        Account account = accountRepository.findByAccountNumber(accountNumber);
-
-        if (account == null) {
-            throw new InvalidPinExceptionImpl("Conta não encontrada.");
-        }
+        Account account = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new InvalidPinExceptionImpl("Conta não encontrada."));
 
         try {
             account.authenticate(pin);
@@ -77,10 +74,8 @@ public class AtmService {
     public void transfer(String targetAccountNumber, double amount) {
         ensureAuthenticated();
 
-        Account targetAccount = accountRepository.findByAccountNumber(targetAccountNumber);
-        if (targetAccount == null) {
-            throw new IllegalArgumentException("Conta de destino não encontrada.");
-        }
+        Account targetAccount = accountRepository.findByAccountNumber(targetAccountNumber)
+                .orElseThrow(() -> new IllegalArgumentException("Conta de destino não encontrada."));
 
         try {
             currentAccount.transfer(targetAccount, Money.of(amount));

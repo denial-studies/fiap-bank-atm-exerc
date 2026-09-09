@@ -5,9 +5,13 @@ import com.fiap.bank.atm.domain.model.Money;
 import com.fiap.bank.atm.domain.model.Transaction;
 import com.fiap.bank.atm.domain.model.TransactionType;
 import com.fiap.bank.atm.domain.repository.AccountRepository;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class InMemoryAccountRepository implements AccountRepository {
@@ -50,14 +54,36 @@ public class InMemoryAccountRepository implements AccountRepository {
         }
 
         @Override
-        public Account findByAccountNumber(String accountNumber) {
-                // Return a reference (or clone, but reference works for state updates in memory
-                // repository)
-                return accounts.get(accountNumber);
+        public Optional<Account> findByAccountNumber(String accountNumber) {
+                return Optional.ofNullable(accounts.get(accountNumber));
+        }
+
+        @Override
+        public Optional<Account> findById(UUID id) {
+                return accounts.values().stream()
+                                .filter(account -> account.getId().equals(id))
+                                .findFirst();
+        }
+
+        @Override
+        public List<Account> findAll() {
+                return new ArrayList<>(accounts.values());
         }
 
         @Override
         public void save(Account account) {
                 accounts.put(account.getAccountNumber(), account);
+        }
+
+        @Override
+        public void delete(Account account) {
+                if (account != null) {
+                        accounts.remove(account.getAccountNumber());
+                }
+        }
+
+        @Override
+        public void deleteById(UUID id) {
+                findById(id).ifPresent(this::delete);
         }
 }
