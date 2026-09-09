@@ -65,6 +65,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.1</version>
                 <configuration>
+                    <skip>false</skip>
                     <mainClass>com.fiap.bank.atm.presentation.AtmApplication</mainClass>
                 </configuration>
             </plugin>
