@@ -8,6 +8,10 @@
 > **FIAP - Engenharia de Software (2026)**  
 > **Checkpoint 4 (CP4)** — Aplicação de Emulação de Caixa Eletrônico (ATM) construída em **Java 21**, **Swing (FlatLaf)** e orientada aos princípios de **Domain-Driven Design (DDD)**.
 
+| Integrante | RM |
+| :--- | :--- |
+| **Daniel Oliveira de Souza** | **566284** |
+
 ---
 
 ## 📌 Visão Geral
