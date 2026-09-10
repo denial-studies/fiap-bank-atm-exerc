@@ -14,6 +14,7 @@ import com.fiap.bank.atm.domain.exception.InvalidPinException;
 import com.fiap.bank.atm.domain.model.Account;
 import com.fiap.bank.atm.domain.model.Money;
 import com.fiap.bank.atm.domain.repository.AccountRepository;
+import com.fiap.bank.atm.infrastructure.persistence.AccountRepositoryJdbcImpl;
 import com.fiap.bank.atm.infrastructure.persistence.InMemoryAccountRepository;
 
 import java.util.List;
@@ -23,11 +24,22 @@ public class AtmService {
     private Account currentAccount;
 
     public AtmService() {
-        this(new InMemoryAccountRepository());
+        this(new AccountRepositoryJdbcImpl());
     }
 
     public AtmService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
+        initDatabase();
+    }
+
+    private void initDatabase() {
+        InMemoryAccountRepository inMemory = new InMemoryAccountRepository();
+        inMemory.createTables();
+        if (this.accountRepository.findAll().isEmpty()) {
+            for (Account account : inMemory.createInitialAccounts()) {
+                this.accountRepository.save(account);
+            }
+        }
     }
 
     public AccountInfoDTO authenticate(String accountNumber, String pin) {
@@ -37,6 +49,7 @@ public class AtmService {
         try {
             account.authenticate(pin);
             currentAccount = account;
+            accountRepository.save(account);
             return toDTO(account);
         } catch (AccountBlockedException e) {
             accountRepository.save(account);

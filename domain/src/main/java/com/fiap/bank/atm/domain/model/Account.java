@@ -36,6 +36,10 @@ public class Account extends BaseEntity {
         return accountNumber;
     }
 
+    public String getPin() {
+        return pin;
+    }
+
     public Money getBalance() {
         return balance;
     }
